@@ -1,0 +1,94 @@
+#include <iostream>
+#include <conio.h>
+#include <windows.h>
+using namespace std;
+void instructiuni();
+void start();
+void afisare();
+void sarpe();
+void fruct();
+int optiune = 0;
+char revenire = NULL;
+int width = 20;
+int height = 20;
+char matrix[24][24] = {};
+int x, y, fructx, fructy, scor;
+bool oprirejoc;
+void menu() {
+	optiune = 0;
+	sizeof(500);
+	system("TITLE SNAKE");
+	system("COLOR 12");
+	cout << "1.Start Game\n";
+	cout << "2.Instructiuni joc\n";
+	cout << "3.Exit\n";
+	cin >> optiune;
+	if (optiune == 1 || optiune == 2 || optiune == 3);
+	else {
+		system("cls");
+		menu();
+	}
+	if (optiune == 3)exit(EXIT_FAILURE);
+	if (optiune == 2) {
+		system("cls");
+		instructiuni();
+	}
+	if (optiune == 1) {
+		start();
+		while (oprirejoc == false) {
+			sarpe();
+			fruct();
+			afisare();
+		}
+	}
+}
+void instructiuni() {
+	cout << "Trebuie sa colectati * (punctele) fara a va intersecta cu marginile chenarului si fara a va musca propria coada.Fiecare punct colectat va creste dimensiunea sarpelui si va adauga 10 puncte la scorul dv.Odata ce veti atinge 100 puncte nivelul dv va creste.Cresterea nivelului consta in rapiditate cu care se va misca sarpele,cu cat nivelul va fi mai mare,cu atat sarpele va avea o viteza mai ridicata.\n";
+	cout << "Butoanele sunt:\n" << "           W(sus)\n" << "A(stanga)  S(jos)  D(dreapta)\n";
+	cout << "Pentru a reveni la meniu apasati tasta X!\n";
+	cin >> revenire;
+	if (revenire == 'x' || revenire == 'X') {
+		system("cls");
+		menu();
+	}
+
+}
+void start() {
+	oprirejoc = false;
+	x = width / 2;
+	y = height / 2;
+	fructx = rand() % width;
+	fructy = rand() % height;
+	scor = 0;
+	matrix[0][0] = 218;
+	matrix[0][width + 1] = 191;
+	matrix[height + 1][0] = 192;
+	matrix[height + 1][width + 1] = 217;
+	for (int i = 1; i < width + 1; i++) {
+		matrix[0][i] = 196;
+		matrix[height + 1][i] = 196;
+	}
+    for (int i = 1; i < height + 1; i++) {
+		matrix[i][0] = 179;
+		matrix[i][width + 1] = 179;
+	}
+}
+void afisare() {
+	system("cls");
+	for (int i = 0; i <= height + 1; i++) {
+		for (int j = 0; j <= width + 1; j++) {
+			cout << matrix[i][j];
+		}
+		cout << '\n';
+	}
+	system("pause");
+}
+void sarpe() {
+	matrix[x][y] = 'O';
+}
+void fruct() {
+	matrix[fructx][fructy] = '*';
+}
+	int main() {
+		menu();
+	}
