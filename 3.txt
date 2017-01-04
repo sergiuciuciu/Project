@@ -1,0 +1,157 @@
+#include <iostream>
+#include <conio.h>
+#include <windows.h>
+using namespace std;
+void instructiuni();
+void start();
+void afisare();
+void fruct();
+void miscare();
+void input();
+char optiune = 0;
+char revenire = NULL;
+int width = 20;
+int height = 20;
+int x, y, fructx, fructy, scor=0, nivel = 1,somn=200;
+bool oprirejoc;
+enum eDirecton { STOP = 0, LEFT, RIGHT, UP, DOWN };
+eDirecton dir;
+void menu() {
+	optiune = 0;
+	cout << "1.Start Game\n";
+	cout << "2.Instructiuni joc\n";
+	cout << "3.Exit\n";
+	cin >> optiune;
+	if (optiune == 1 + '0' || optiune == 2 + '0' || optiune == 3 + '0') {
+		if (optiune == 3 + '0')exit(EXIT_FAILURE);
+		if (optiune == 2 + '0') {
+			system("cls");
+			instructiuni();
+		}
+		if (optiune == 1 + '0') {
+			start();
+			while (oprirejoc == false) {
+				afisare();
+				input();
+				miscare();
+				Sleep(somn);
+				if (scor == 100) {
+					nivel++;
+					scor = 0;
+					somn = somn - 10;
+				}
+			}
+		}
+	}
+	else {
+		system("cls");
+		menu();
+	}
+}
+void instructiuni() {
+	cout << "Trebuie sa colectati * (punctele) fara a va intersecta cu marginile chenarului si fara a va musca propria coada.Fiecare punct colectat va creste dimensiunea sarpelui si va adauga 10 puncte la scorul dv.Odata ce veti atinge 100 puncte nivelul dv va creste.Cresterea nivelului consta in rapiditate cu care se va misca sarpele,cu cat nivelul va fi mai mare,cu atat sarpele va avea o viteza mai ridicata.\n";
+	cout << "Butoanele sunt:\n" << "           W(sus)\n" << "A(stanga)  S(jos)  D(dreapta)\n";
+	cout << "Pentru a reveni la meniu apasati tasta X!\n";
+	cin >> revenire;
+	if (revenire == 'x' || revenire == 'X') {
+		system("cls");
+		menu();
+	}
+	else {
+		system("cls");
+		instructiuni();
+	}
+
+}
+void start() {
+	oprirejoc = false;
+	x = width / 2;
+	y = height / 2;
+	fructx = rand() % width;
+	fructy = rand() % height;
+	dir = STOP;
+}
+void afisare() {
+	system("cls");
+	cout << '.';
+	for (int i = 1; i < width + 1; i++)
+		cout << '-';
+	cout << '.';
+	cout << '\n';
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < width; j++) {
+			bool print = true;
+			if (j == 0)cout << '|';
+			if (i == y&&j == x)cout << 'O';
+			else if (j == fructx&&i == fructy)cout << '*';
+			else print = false;
+			if (print != true)cout << ' ';
+			if (j == width - 1)cout << '|';
+		}
+		cout << '\n';
+	}
+	cout << '.';
+	for (int i = 1; i < width + 1; i++) {
+		cout << '-';
+	}
+	cout << '.';
+	cout << '\n';
+	cout << "Scor:" << scor << '\n';
+	cout << "Level:" << nivel;
+}
+void fruct() {
+	fructx = rand() % width;
+	fructy = rand() % height;
+}
+void input() {
+	if (_kbhit())
+	{
+		switch (_getch())
+		{
+		case 'a':
+			dir = LEFT;
+			break;
+		case 'd':
+			dir = RIGHT;
+			break;
+		case 'w':
+			dir = UP;
+			break;
+		case 's':
+			dir = DOWN;
+			break;
+		case 'x':
+			oprirejoc = true;
+			break;
+		}
+	}
+}
+void miscare() {
+	switch (dir)
+	{
+	case LEFT:
+		x--;
+		break;
+	case RIGHT:
+		x++;
+		break;
+	case UP:
+		y--;
+		break;
+	case DOWN:
+		y++;
+		break;
+	default:
+		break;
+	}
+	if (x > width || y > height || x < 0 || y < 0)oprirejoc = true;
+	if (x == fructx&&y == fructy) {
+		scor = scor + 10;
+		fruct();
+	}
+}
+int main() {
+	system("TITLE SNAKE");
+	system("COLOR 12");
+	menu();
+}
