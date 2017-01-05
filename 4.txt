@@ -1,0 +1,199 @@
+#include <iostream>
+#include <conio.h>
+#define _WIN32_WINNT 0x0500
+#include <windows.h>
+using namespace std;
+
+void instructiuni();
+void start();
+void afisare();
+void fruct();
+void miscare();
+void input();
+char optiune = 0;
+char revenire = NULL;
+int width = 20;
+int height = 20;
+int x, y, fructx, fructy, scor=0, nivel = 1,somn=200;
+bool oprirejoc;
+enum eDirecton { STOP = 0, LEFT, RIGHT, UP, DOWN };
+eDirecton dir;
+void menu() {
+	CONSOLE_FONT_INFOEX cfi;
+	cfi.cbSize = sizeof cfi;
+	cfi.nFont = 0;
+	cfi.dwFontSize.X = 20;
+	cfi.dwFontSize.Y = 40;
+	cfi.FontFamily = FF_DONTCARE;
+	cfi.FontWeight = FW_NORMAL;
+
+	SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi);
+	optiune = 0;
+	cout << '\n';
+	cout << '\n';
+	cout << "1.Start Game\n";
+	cout << "2.Instructiuni joc\n";
+	cout << "Pentru a iesi,apasati tasta ESC";
+	cin >> optiune;
+	if (optiune == 1 + '0' || optiune == 2 + '0' || optiune == 3 + '0') {
+		if (optiune == VK_ESCAPE)exit(EXIT_FAILURE);
+		if (optiune == 2 + '0') {
+			system("cls");
+			instructiuni();
+		}
+		if (optiune == 1 + '0') {
+			CONSOLE_FONT_INFOEX cfi;
+			cfi.cbSize = sizeof cfi;
+			cfi.nFont = 0;
+			cfi.dwFontSize.X = 40;
+			cfi.dwFontSize.Y = 40;
+			cfi.FontFamily = FF_DONTCARE;
+			cfi.FontWeight = FW_NORMAL;
+
+			SetCurrentConsoleFontEx(GetStdHandle(STD_OUTPUT_HANDLE), FALSE, &cfi);
+			start();
+			while (oprirejoc == false) {
+				afisare();
+				input();
+				miscare();
+				Sleep(somn);
+				if (scor == 100&&scor>0) {
+					nivel++;
+					scor = 0;
+					somn = somn - 20;
+				}
+			}
+			system("cls");
+			menu();
+		}
+	}
+	else {
+		system("cls");
+		menu();
+	}
+}
+void instructiuni() {
+	cout << "Trebuie sa colectati * (punctele) fara a va intersecta cu marginile chenarului si fara a va musca propria coada.Fiecare punct colectat va creste dimensiunea sarpelui si va adauga 10 puncte la scorul dv.Odata ce veti atinge 100 puncte nivelul dv va creste.Cresterea nivelului consta in rapiditate cu care se va misca sarpele,cu cat nivelul va fi mai mare,cu atat sarpele va avea o viteza mai ridicata.\n";
+	cout << "Butoanele sunt:\n" << "           W(sus)\n" << "A(stanga)  S(jos)  D(dreapta)\n";
+	cout << "Pentru a reveni la meniu apasati tasta X!\n";
+	cin >> revenire;
+	if (revenire == 'x' || revenire == 'X') {
+		system("cls");
+		menu();
+	}
+	else {
+		system("cls");
+		instructiuni();
+	}
+
+}
+void start() {
+	oprirejoc = false;
+	x = width / 2;
+	y = height / 2;
+	fructx = rand() % width;
+	fructy = rand() % height;
+	dir = STOP;
+}
+void afisare() {
+	system("cls");
+	cout << '.';
+	for (int i = 1; i < width + 1; i++)
+		cout << '-';
+	cout << '.';
+	cout << '\n';
+	for (int i = 0; i < height; i++) {
+		for (int j = 0; j < width; j++) {
+			bool print = true;
+			if (j == 0)cout << '|';
+			if (i == y&&j == x)cout << 'O';
+			else if (j == fructx&&i == fructy)cout << '*';
+			else print = false;
+			if (print != true)cout << ' ';
+			if (j == width - 1)cout << '|';
+		}
+		cout << '\n';
+	}
+	cout << '.';
+	for (int i = 1; i < width + 1; i++) {
+		cout << '-';
+	}
+	cout << '.';
+	cout << '\n';
+	cout << "Scor:" << scor << '\n';
+	cout << "Level:" << nivel<<'\n';
+	cout << "Apasati tasta :\n BACKSPACE pentru a reveni la meniu\n ESC pentru a parasi jocul";
+}
+void fruct() {
+	fructx = rand() % width;
+	fructy = rand() % height;
+	Beep(500, 100);
+}
+void input() {
+	if (_kbhit())
+	{
+		switch (_getch())
+		{
+		case 'a':
+			dir = LEFT;
+			break;
+		case 'd':
+			dir = RIGHT;
+			break;
+		case 'w':
+			dir = UP;
+			break;
+		case 's':
+			dir = DOWN;
+			break;
+		case 'A':
+			dir = LEFT;
+			break;
+		case 'D':
+			dir = RIGHT;
+			break;
+		case 'W':
+			dir = UP;
+			break;
+		case 'S':
+			dir = DOWN;
+			break;
+		case VK_ESCAPE:
+			exit(EXIT_FAILURE);
+		case VK_BACK:
+			oprirejoc = true;
+			break;
+		}
+	}
+}
+void miscare() {
+	switch (dir)
+	{
+	case LEFT:
+		x--;
+		break;
+	case RIGHT:
+		x++;
+		break;
+	case UP:
+		y--;
+		break;
+	case DOWN:
+		y++;
+		break;
+	default:
+		break;
+	}
+	if (x > width || y > height || x < 0 || y < 0)oprirejoc = true;
+	if (x == fructx&&y == fructy) {
+		scor = scor + 10;
+		fruct();
+	}
+}
+int main() {
+	HANDLE outcon = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(outcon, 0x0C);
+	SetConsoleDisplayMode(GetStdHandle(STD_OUTPUT_HANDLE), CONSOLE_FULLSCREEN_MODE, 0);
+	system("TITLE SNAKE");
+	menu();
+}
