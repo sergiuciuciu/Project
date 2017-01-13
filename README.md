@@ -1,0 +1,1 @@
+Jocul necesita VisualStudio preinstalat!
