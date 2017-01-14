@@ -154,6 +154,10 @@ void pause() {
 		ascunderecursor();
 		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0x0c);
 		cout << '*';
+		pozitiecursor(xpow, ypow);
+		ascunderecursor();
+		SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), 0x0c);
+		cout << '?';
 	}
 	else {
 		system("cls");
@@ -1061,6 +1065,7 @@ void miscare() {
 			if (scor > 90) {
 				scor = scor % 100;
 				nivel++;
+				timp=timp-20;
 				pozitiecursor(38, 4);
 				ascunderecursor();
 				cout << "  ";
